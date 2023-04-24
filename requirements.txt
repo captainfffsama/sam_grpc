@@ -1,8 +1,5 @@
 numpy
 opencv-python
-torch >1.6
-torchvision
-segment-anything @ git+https://github.com/facebookresearch/segment-anything.git#egg=segment-anything
 protobuf
 grpcio
 grpcio-tools

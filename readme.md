@@ -2,6 +2,7 @@
 a simple rpc tools for [SAM](https://github.com/facebookresearch/segment-anything)
 
 # Installation
+install on server need `torch`,[SAM](https://github.com/facebookresearch/segment-anything)
 ```shell
 pip install git+https://github.com/captainfffsama/sam_grpc.git
 ```

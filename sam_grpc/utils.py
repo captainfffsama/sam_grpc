@@ -3,12 +3,11 @@
 @Author: captainfffsama
 @Date: 2023-04-21 16:57:50
 @LastEditors: captainfffsama tuanzhangsama@outlook.com
-@LastEditTime: 2023-04-24 16:10:54
+@LastEditTime: 2023-04-24 17:08:21
 @FilePath: /sam_grpc/sam_grpc/utils.py
 @Description:
 '''
 from typing import Union
-import torch
 
 import os
 import base64
@@ -17,7 +16,6 @@ import numpy as np
 import cv2
 
 from .proto import dldetection_pb2
-
 
 def get_img(img_info):
     if os.path.isfile(img_info):
@@ -45,7 +43,7 @@ PROTO2NP_MAP = {
 
 
 def np2tensor_proto(
-    np_ndarray: Union[np.ndarray, torch.Tensor]
+    np_ndarray: Union[np.ndarray, "torch.Tensor"]
 ) -> Union[dldetection_pb2.TensorInt, dldetection_pb2.TensorFloat,
            dldetection_pb2.TensorBool]:
     """
@@ -58,7 +56,7 @@ def np2tensor_proto(
         Union[dldetection_pb2.TensorInt, dldetection_pb2.TensorFloat, dldetection_pb2.TensorBool]:
         A tensor protobuf message containing the data from the input ndarray or tensor.
     """
-    if isinstance(np_ndarray, torch.Tensor):
+    if not isinstance(np_ndarray, np.ndarray) and hasattr(np_ndarray, "detach"):
         np_ndarray = np_ndarray.detach().cpu().numpy()
     shape = list(np_ndarray.shape)
     data = np_ndarray.flatten().tolist()
