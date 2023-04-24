@@ -2,6 +2,9 @@
 a simple rpc tools for SAM
 
 # Installation
+```shell
+pip install git+https://github.com/captainfffsama/sam_grpc.git
+```
 
 # Getting Started
 On Server:
@@ -15,7 +18,7 @@ On client:
 import cv2
 from sam_grpc import SAMClient
 
-img=cv2.imread("/home/chiebotgpuhq/MyCode/python/pytorch/mmdet_grpc/test_weight/2.jpg")
+img=cv2.imread("/test_weight/2.jpg")
 
 with SAMClient("127.0.0.1","52018") as client:
     r=client.SAMGetImageEmbedding(img)
