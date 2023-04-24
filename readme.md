@@ -1,5 +1,5 @@
 # Introduction
-a simple rpc tools for SAM
+a simple rpc tools for [SAM](https://github.com/facebookresearch/segment-anything)
 
 # Installation
 ```shell
@@ -30,3 +30,5 @@ with SAMClient("127.0.0.1","52018") as client:
     r3=client.SAMPredictUseCache(r1[-1])
     print(r3)
 ```
+# Thanks
+Thanks to Meta for open-sourcing their [excellent work](https://github.com/facebookresearch/segment-anything).
