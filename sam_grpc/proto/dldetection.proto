@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package aiservice;
+
+service AiService {
+    rpc SAMGetImageEmbedding(Image) returns (InputInferArgs) {}
+    rpc SAMGetImageEmbeddingUseCache(Image) returns (InputInferArgsWithCache) {}
+
+    rpc SAMPredict(SAMPredictRequest) returns (SAMPredictResponse) {} // 深度学习检测服务
+    rpc SAMPredictUseCache(SAMPredictUseCacheRequest) returns (SAMPredictResponseWithCache) {}
+
+    rpc CleanCache(ServerCache) returns (CleanCacheRespose) {}
+}
+
+message Image {
+    bytes imdata = 1;
+    string path = 2;
+}
+
+message InputInferArgs {
+    TensorFloat features = 1;
+    repeated int32 input_size =2;
+    repeated int32 original_size =3;
+}
+
+message InputInferArgsWithCache {
+    InputInferArgs  result = 1;
+    ServerCache cache_idx = 2;
+}
+
+message SAMPredictRequest {
+    InputInferArgs infer_args = 1;
+    TensorInt point_coords = 2;
+    TensorInt point_labels = 3;
+    TensorInt box = 4;
+    TensorFloat mask_input = 5;
+    bool multimask_output = 6;
+    bool return_logits = 7;
+}
+
+message SAMPredictUseCacheRequest {
+    ServerCache infer_args_cache = 1;
+    TensorInt point_coords = 2;
+    TensorInt point_labels = 3;
+    TensorInt box = 4;
+    ServerCache mask_input_cache = 5;
+    bool multimask_output = 6;
+    bool return_logits = 7;
+}
+message SAMPredictResponse {
+    TensorBool masks = 1;
+    TensorFloat scores = 2;
+    TensorFloat logits = 3;
+    int32 status = 4;
+}
+
+message SAMPredictResponseWithCache {
+    SAMPredictResponse result = 1;
+    ServerCache cache_idx = 2;
+}
+
+message ServerCache {
+    string cache_name=1;
+    string cache_type=2;
+}
+
+message CleanCacheRespose {
+    int32 status = 1;
+}
+
+
+
+
+
+message TensorFloat {
+  repeated float data =1;
+  repeated int32 shape =2;
+}
+
+message TensorBool {
+  repeated bool data =1;
+  repeated int32 shape =2;
+}
+
+message TensorInt {
+  repeated int32 data =1;
+  repeated int32 shape =2;
+}
