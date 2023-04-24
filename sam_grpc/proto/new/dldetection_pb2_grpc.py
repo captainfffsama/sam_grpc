@@ -22,7 +22,7 @@ class AiServiceStub(object):
         self.SAMGetImageEmbeddingUseCache = channel.unary_unary(
                 '/aiservice.AiService/SAMGetImageEmbeddingUseCache',
                 request_serializer=dldetection__pb2.Image.SerializeToString,
-                response_deserializer=dldetection__pb2.ServerCache.FromString,
+                response_deserializer=dldetection__pb2.InputInferArgsWithCache.FromString,
                 )
         self.SAMPredict = channel.unary_unary(
                 '/aiservice.AiService/SAMPredict',
@@ -32,7 +32,7 @@ class AiServiceStub(object):
         self.SAMPredictUseCache = channel.unary_unary(
                 '/aiservice.AiService/SAMPredictUseCache',
                 request_serializer=dldetection__pb2.SAMPredictUseCacheRequest.SerializeToString,
-                response_deserializer=dldetection__pb2.SAMPredictResponse.FromString,
+                response_deserializer=dldetection__pb2.SAMPredictResponseWithCache.FromString,
                 )
         self.CleanCache = channel.unary_unary(
                 '/aiservice.AiService/CleanCache',
@@ -85,7 +85,7 @@ def add_AiServiceServicer_to_server(servicer, server):
             'SAMGetImageEmbeddingUseCache': grpc.unary_unary_rpc_method_handler(
                     servicer.SAMGetImageEmbeddingUseCache,
                     request_deserializer=dldetection__pb2.Image.FromString,
-                    response_serializer=dldetection__pb2.ServerCache.SerializeToString,
+                    response_serializer=dldetection__pb2.InputInferArgsWithCache.SerializeToString,
             ),
             'SAMPredict': grpc.unary_unary_rpc_method_handler(
                     servicer.SAMPredict,
@@ -95,7 +95,7 @@ def add_AiServiceServicer_to_server(servicer, server):
             'SAMPredictUseCache': grpc.unary_unary_rpc_method_handler(
                     servicer.SAMPredictUseCache,
                     request_deserializer=dldetection__pb2.SAMPredictUseCacheRequest.FromString,
-                    response_serializer=dldetection__pb2.SAMPredictResponse.SerializeToString,
+                    response_serializer=dldetection__pb2.SAMPredictResponseWithCache.SerializeToString,
             ),
             'CleanCache': grpc.unary_unary_rpc_method_handler(
                     servicer.CleanCache,
@@ -142,7 +142,7 @@ class AiService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/aiservice.AiService/SAMGetImageEmbeddingUseCache',
             dldetection__pb2.Image.SerializeToString,
-            dldetection__pb2.ServerCache.FromString,
+            dldetection__pb2.InputInferArgsWithCache.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -176,7 +176,7 @@ class AiService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/aiservice.AiService/SAMPredictUseCache',
             dldetection__pb2.SAMPredictUseCacheRequest.SerializeToString,
-            dldetection__pb2.SAMPredictResponse.FromString,
+            dldetection__pb2.SAMPredictResponseWithCache.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

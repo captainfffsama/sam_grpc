@@ -3,7 +3,7 @@
 @Author: captainfffsama
 @Date: 2023-04-21 16:23:16
 @LastEditors: captainfffsama tuanzhangsama@outlook.com
-@LastEditTime: 2023-04-24 12:56:01
+@LastEditTime: 2023-04-24 13:45:41
 @FilePath: /sam_grpc/test.py
 @Description:
 '''
@@ -117,8 +117,10 @@ def run():
         req1 =stub.SAMGetImageEmbedding(img_proto)
         print(InputInferArgs.from_proto(req1))
 
-        # r2=stub.SAMGetImageEmbeddingUseCache(img_proto)
-        # print(r2.cache_name+"---"+r2.cache_type)
+        r2=stub.SAMGetImageEmbeddingUseCache(img_proto)
+        print(r2.cache_name+"---"+r2.cache_type)
+
+        r3=stub.SAMPredict()
 
         # with open("/data/tmp.npy","rb") as fr:
         #     features=np.load(fr)

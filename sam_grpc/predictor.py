@@ -3,8 +3,8 @@
 @Author: captainfffsama
 @Date: 2023-04-21 15:49:00
 @LastEditors: captainfffsama tuanzhangsama@outlook.com
-@LastEditTime: 2023-04-24 12:50:21
-@FilePath: /sam_grpc/lib/predictor.py
+@LastEditTime: 2023-04-24 15:39:21
+@FilePath: /sam_grpc/sam_grpc/predictor.py
 @Description: a modification for sam predictor
 '''
 # Copyright (c) Meta Platforms, Inc. and affiliates.
@@ -13,42 +13,14 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-from copy import deepcopy
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple
 
 import numpy as np
 import torch
 
 from segment_anything.modeling import Sam
 from segment_anything.utils.transforms import ResizeLongestSide
-
-from sam_grpc.proto import dldetection_pb2
-from sam_grpc.utils import np2tensor_proto, tensor_proto2np
-
-
-class InputInferArgs:
-
-    def __init__(self, original_image_size: Tuple[int, int],
-                 input_size: Tuple[int, int], features: np.ndarray):
-        self.original_size = original_image_size
-        self.input_size = input_size
-        self.features: np.ndarray = features
-
-    def __str__(self):
-        return "original_size:{} \ninput_size:{} \nfeatures size:{}".format(
-            self.original_size, self.input_size, self.features.shape)
-
-    def to_proto(self) -> dldetection_pb2.InputInferArgs:
-        r = dldetection_pb2.InputInferArgs(features=np2tensor_proto(self.features))
-        r.original_size.extend(list(self.original_size))
-        r.input_size.extend(list(self.input_size))
-        return r
-
-    @classmethod
-    def from_proto(cls, proto_cache: dldetection_pb2.InputInferArgs):
-        return cls(original_image_size=tuple(proto_cache.original_size),
-                   input_size=tuple(proto_cache.input_size),
-                   features=tensor_proto2np(proto_cache.features))
+from .client import InputInferArgs
 
 
 class SamPredictorFix:
@@ -109,8 +81,9 @@ class SamPredictorFix:
         input_image = self.model.preprocess(input_image_torch)
 
         features: torch.Tensor = self.model.image_encoder(input_image)
+        torch.cuda.empty_cache()
         return InputInferArgs(original_size, input_size,
-                               features.detach().cpu().numpy())
+                              features.detach().cpu().numpy())
 
     def predict(
         self,
@@ -247,7 +220,7 @@ class SamPredictorFix:
         if isinstance(infer_args.features, np.ndarray):
             features = torch.Tensor(infer_args.features)
         else:
-            features = deepcopy(infer_args.features)
+            features = infer_args.features
 
         if features.device != self.device:
             features = features.to(self.device)

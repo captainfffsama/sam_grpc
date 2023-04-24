@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 '''
 @Author: captainfffsama
-@Date: 2023-04-21 15:50:02
+@Date: 2023-04-24 15:04:42
 @LastEditors: captainfffsama tuanzhangsama@outlook.com
-@LastEditTime: 2023-04-23 12:11:41
-@FilePath: /sam_grpc/main.py
+@LastEditTime: 2023-04-24 15:12:12
+@FilePath: /sam_grpc/sam_grpc/__main__.py
 @Description:
 '''
+
+import sys
 import os
 import argparse
 from concurrent import futures
@@ -15,25 +17,18 @@ from datetime import datetime
 import asyncio
 import pid
 from pid.decorator import pidfile
+import pkgutil
+import yaml
 
 import grpc
-from sam_grpc.proto import dldetection_pb2_grpc as dld_grpc
-from sam_grpc.model import SAMGRPCModel
-import sam_grpc.base_config as config_manager
+from .proto import dldetection_pb2_grpc as dld_grpc
+from .model import SAMGRPCModel
+from . import base_config as config_manager
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(description="")
-    parser.add_argument("-mt", "--model_type", type=str, default="")
-    parser.add_argument("-mw", "--model_weight", type=str, default="")
-    parser.add_argument("-c", "--cfg", type=str, default="")
-    args = parser.parse_args()
-    return args
-
-
-async def main(args):
-    if os.path.exists(args.cfg):
-        config_manager.merge_param(args.cfg)
+async def run_server(args):
+    if os.path.exists(args):
+        config_manager.merge_param(args)
     args_dict: dict = config_manager.param
     print("current time is: ", datetime.now())
     print("pid file save in {}".format(pid.DEFAULT_PID_DIR))
@@ -48,9 +43,6 @@ async def main(args):
                   grpc_args['max_send_message_length']),
                  ('grpc.max_receive_message_length',
                   grpc_args['max_receive_message_length'])])
-    if os.path.exists(args.model_type) and os.path.exists(args.model_weight):
-        detector_params['model_type'] = args.model_type
-        detector_params['ckpt_path'] = args.model_weight
     model = SAMGRPCModel(**detector_params)
     dld_grpc.add_AiServiceServicer_to_server(model, server)
 
@@ -61,10 +53,31 @@ async def main(args):
     await server.wait_for_termination()
 
 @pidfile(pidname='sam_grpc')
-def run():
-    args = parse_args()
-    asyncio.run(main(args))
+def start_server(args):
+    asyncio.run(run_server(args))
 
+def show_cfg_exam():
+    exam_byte = pkgutil.get_data(__package__, 'sam_cfg.yaml')
+    from pprint import pprint
+    pprint(yaml.load(exam_byte, Loader=yaml.FullLoader))
+
+def main():
+    parser = argparse.ArgumentParser(description="grpc调用sam,需要配置文件")
+    parser.add_argument("-c", "--config", type=str, default="", help="配置文件地址")
+    parser.add_argument("-s",
+                        "--show_cfg",
+                        action="store_true",
+                        help="展示配置文件示例")
+    options = parser.parse_args()
+    if options.config:
+        start_server(options.config)
+    if options.show_cfg:
+        show_cfg_exam()
 
 if __name__ == "__main__":
-    run()
+    rc = 1
+    try:
+        main()
+    except Exception as e:
+        print('Error: %s' % e, file=sys.stderr)
+    sys.exit(rc)

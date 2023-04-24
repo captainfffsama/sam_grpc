@@ -3,7 +3,7 @@
 @Author: captainfffsama
 @Date: 2023-04-21 18:15:28
 @LastEditors: captainfffsama tuanzhangsama@outlook.com
-@LastEditTime: 2023-04-24 13:42:53
+@LastEditTime: 2023-04-24 16:12:19
 @FilePath: /sam_grpc/sam_grpc/model.py
 @Description:
 '''
@@ -13,12 +13,13 @@ from datetime import datetime
 import numpy as np
 from cacheout import LFUCache
 
-from sam_grpc.proto import dldetection_pb2
-from sam_grpc.proto import dldetection_pb2_grpc as dld_pb2_grpc
+from .proto import dldetection_pb2
+from .proto import dldetection_pb2_grpc as dld_pb2_grpc
 
 from segment_anything import sam_model_registry
-from sam_grpc.predictor import SamPredictorFix, InputInferArgs
-from sam_grpc.utils import tensor_proto2np, np2tensor_proto, protoImage2cvImg
+from .predictor import SamPredictorFix
+from .utils import tensor_proto2np, np2tensor_proto, protoImage2cvImg, protoTensorIsValid
+from .container import InputInferArgs
 
 
 class SAMGRPCModel(dld_pb2_grpc.AiServiceServicer):
@@ -63,17 +64,24 @@ class SAMGRPCModel(dld_pb2_grpc.AiServiceServicer):
             cache_name=cache_name,
         )
 
-        return dldetection_pb2.InputInferArgsWithCache(result=infer_cache.to_proto(),
-                                                       cache_idx=cache_proto)
+        return dldetection_pb2.InputInferArgsWithCache(
+            result=infer_cache.to_proto(), cache_idx=cache_proto)
 
     def SAMPredict(self, request,
                    context) -> dldetection_pb2.SAMPredictResponse:
         infer_args = InputInferArgs.from_proto(request.infer_args)
 
-        point_coords = tensor_proto2np(request.point_coords)
-        point_labels = tensor_proto2np(request.point_labels)
-        box = tensor_proto2np(request.box)
-        mask_input = tensor_proto2np(request.mask_input)
+        point_coords = tensor_proto2np(
+            request.point_coords) if protoTensorIsValid(
+                request.point_coords) else None
+        point_labels = tensor_proto2np(
+            request.point_labels) if protoTensorIsValid(
+                request.point_labels) else None
+        box = tensor_proto2np(request.box) if protoTensorIsValid(
+            request.box) else None
+        mask_input = tensor_proto2np(request.mask_input) if protoTensorIsValid(
+            request.mask_input) else None
+
         multimask_output = bool(request.multimask_output)
         return_logits = bool(request.return_logits)
         masks, scores, logits = self.predictor.predict(
@@ -97,9 +105,14 @@ class SAMGRPCModel(dld_pb2_grpc.AiServiceServicer):
 
         mask_input_cache = self._get_cache(request.mask_input_cache)
 
-        point_coords = tensor_proto2np(request.point_coords)
-        point_labels = tensor_proto2np(request.point_labels)
-        box = tensor_proto2np(request.box)
+        point_coords = tensor_proto2np(
+            request.point_coords) if protoTensorIsValid(
+                request.point_coords) else None
+        point_labels = tensor_proto2np(
+            request.point_labels) if protoTensorIsValid(
+                request.point_labels) else None
+        box = tensor_proto2np(request.box) if protoTensorIsValid(
+            request.box) else None
 
         multimask_output = bool(request.multimask_output)
         return_logits = bool(request.return_logits)
