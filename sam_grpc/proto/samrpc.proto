@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package aiservice;
+package sam_service;
 
-service AiService {
+service SAMService {
     rpc SAMGetImageEmbedding(Image) returns (InputInferArgs) {}
     rpc SAMGetImageEmbeddingUseCache(Image) returns (InputInferArgsWithCache) {}
 

@@ -12,7 +12,7 @@ from typing import Optional, Tuple, Union
 
 import numpy as np
 
-from .proto import dldetection_pb2
+from .proto import samrpc_pb2
 from .utils import np2tensor_proto, tensor_proto2np
 
 class InputInferArgs:
@@ -27,14 +27,14 @@ class InputInferArgs:
         return "InputInferArgs:\noriginal_size:{} \ninput_size:{} \nfeatures size:{}".format(
             self.original_size, self.input_size, self.features.shape)
 
-    def to_proto(self) -> dldetection_pb2.InputInferArgs:
-        r = dldetection_pb2.InputInferArgs(features=np2tensor_proto(self.features))
+    def to_proto(self) -> samrpc_pb2.InputInferArgs:
+        r = samrpc_pb2.InputInferArgs(features=np2tensor_proto(self.features))
         r.original_size.extend(list(self.original_size))
         r.input_size.extend(list(self.input_size))
         return r
 
     @classmethod
-    def from_proto(cls, proto: dldetection_pb2.InputInferArgs):
+    def from_proto(cls, proto: samrpc_pb2.InputInferArgs):
         return cls(original_image_size=tuple(proto.original_size),
                    input_size=tuple(proto.input_size),
                    features=tensor_proto2np(proto.features))
@@ -48,12 +48,12 @@ class ServerCache:
     def __repr__(self):
         return "ServerCache:\ncache_name:{} \ncache_type:{}".format(self.cache_name,self.cache_type)
 
-    def to_proto(self) -> dldetection_pb2.ServerCache:
-        r = dldetection_pb2.ServerCache(cache_name=self.cache_name,
+    def to_proto(self) -> samrpc_pb2.ServerCache:
+        r = samrpc_pb2.ServerCache(cache_name=self.cache_name,
                                         cache_type=self.cache_type)
         return r
 
     @classmethod
-    def from_proto(cls,proto:dldetection_pb2.ServerCache):
+    def from_proto(cls,proto:samrpc_pb2.ServerCache):
         return cls(cache_name=proto.cache_name,
                    cache_type=proto.cache_type)

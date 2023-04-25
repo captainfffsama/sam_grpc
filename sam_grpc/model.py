@@ -3,7 +3,7 @@
 @Author: captainfffsama
 @Date: 2023-04-21 18:15:28
 @LastEditors: captainfffsama tuanzhangsama@outlook.com
-@LastEditTime: 2023-04-24 16:12:19
+@LastEditTime: 2023-04-25 11:15:28
 @FilePath: /sam_grpc/sam_grpc/model.py
 @Description:
 '''
@@ -13,8 +13,8 @@ from datetime import datetime
 import numpy as np
 from cacheout import LFUCache
 
-from .proto import dldetection_pb2
-from .proto import dldetection_pb2_grpc as dld_pb2_grpc
+from .proto import samrpc_pb2
+from .proto import samrpc_pb2_grpc as sam_pb2_grpc
 
 from segment_anything import sam_model_registry
 from .predictor import SamPredictorFix
@@ -22,7 +22,7 @@ from .utils import tensor_proto2np, np2tensor_proto, protoImage2cvImg, protoTens
 from .container import InputInferArgs
 
 
-class SAMGRPCModel(dld_pb2_grpc.AiServiceServicer):
+class SAMGRPCModel(sam_pb2_grpc.SAMServiceServicer):
 
     def __init__(self,
                  ckpt_path,
@@ -37,20 +37,20 @@ class SAMGRPCModel(dld_pb2_grpc.AiServiceServicer):
                               timer=time.time,
                               default=None)
 
-    def _get_cache(self, server_cache_proto: dldetection_pb2.ServerCache):
+    def _get_cache(self, server_cache_proto: samrpc_pb2.ServerCache):
         cache_type = server_cache_proto.cache_type
         cache_name = server_cache_proto.cache_name
         return self.cache.get(cache_type + cache_name)
 
     def SAMGetImageEmbedding(self, request,
-                             context) -> dldetection_pb2.InputInferArgs:
+                             context) -> samrpc_pb2.InputInferArgs:
         image = protoImage2cvImg(request)
         infer_cache = self.predictor.generate_infer_cache(image, "BGR")
         result = infer_cache.to_proto()
         return result
 
     def SAMGetImageEmbeddingUseCache(
-            self, request, context) -> dldetection_pb2.InputInferArgsWithCache:
+            self, request, context) -> samrpc_pb2.InputInferArgsWithCache:
         image = protoImage2cvImg(request)
         infer_cache = self.predictor.generate_infer_cache(image, "BGR")
 
@@ -59,16 +59,16 @@ class SAMGRPCModel(dld_pb2_grpc.AiServiceServicer):
             context.peer()) + datetime.now().strftime("%y%m%d%h%m%s")
         self.cache.set(cache_type + cache_name, infer_cache, ttl=600)
 
-        cache_proto = dldetection_pb2.ServerCache(
+        cache_proto = samrpc_pb2.ServerCache(
             cache_type=cache_type,
             cache_name=cache_name,
         )
 
-        return dldetection_pb2.InputInferArgsWithCache(
+        return samrpc_pb2.InputInferArgsWithCache(
             result=infer_cache.to_proto(), cache_idx=cache_proto)
 
     def SAMPredict(self, request,
-                   context) -> dldetection_pb2.SAMPredictResponse:
+                   context) -> samrpc_pb2.SAMPredictResponse:
         infer_args = InputInferArgs.from_proto(request.infer_args)
 
         point_coords = tensor_proto2np(
@@ -88,7 +88,7 @@ class SAMGRPCModel(dld_pb2_grpc.AiServiceServicer):
             infer_args, point_coords, point_labels, box, mask_input,
             multimask_output, return_logits)
 
-        response = dldetection_pb2.SAMPredictResponse(
+        response = samrpc_pb2.SAMPredictResponse(
             masks=np2tensor_proto(masks),
             scores=np2tensor_proto(scores),
             logits=np2tensor_proto(logits),
@@ -96,12 +96,12 @@ class SAMGRPCModel(dld_pb2_grpc.AiServiceServicer):
         return response
 
     def SAMPredictUseCache(
-            self, request: dldetection_pb2.SAMPredictUseCacheRequest,
-            context) -> dldetection_pb2.SAMPredictResponseWithCache:
+            self, request: samrpc_pb2.SAMPredictUseCacheRequest,
+            context) -> samrpc_pb2.SAMPredictResponseWithCache:
         infer_args_cache = self._get_cache(request.infer_args_cache)
         if infer_args_cache is None:
-            r = dldetection_pb2.SAMPredictResponse(status=-1)
-            return dldetection_pb2.SAMPredictResponseWithCache(result=r)
+            r = samrpc_pb2.SAMPredictResponse(status=-1)
+            return samrpc_pb2.SAMPredictResponseWithCache(result=r)
 
         mask_input_cache = self._get_cache(request.mask_input_cache)
 
@@ -120,7 +120,7 @@ class SAMGRPCModel(dld_pb2_grpc.AiServiceServicer):
             infer_args_cache, point_coords, point_labels, box,
             mask_input_cache, multimask_output, return_logits)
 
-        response = dldetection_pb2.SAMPredictResponse(
+        response = samrpc_pb2.SAMPredictResponse(
             masks=np2tensor_proto(masks),
             scores=np2tensor_proto(scores),
             logits=np2tensor_proto(logits),
@@ -133,15 +133,15 @@ class SAMGRPCModel(dld_pb2_grpc.AiServiceServicer):
                        logits[np.argmax(scores), :, :][None, :, :],
                        ttl=600)
 
-        cache_proto = dldetection_pb2.ServerCache(
+        cache_proto = samrpc_pb2.ServerCache(
             cache_type=cache_type,
             cache_name=cache_name,
         )
 
-        return dldetection_pb2.SAMPredictResponseWithCache(
+        return samrpc_pb2.SAMPredictResponseWithCache(
             result=response, cache_idx=cache_proto)
 
     def CleanCache(self, request, context):
         if self.cache.has(request.cache_type + request.cache_name):
             self.cache.delete(request.cache_type + request.cache_name)
-        return dldetection_pb2.CleanCacheResponse(status=0)
+        return samrpc_pb2.CleanCacheResponse(status=0)

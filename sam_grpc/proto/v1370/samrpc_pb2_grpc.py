@@ -2,10 +2,10 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from . import dldetection_pb2 as dldetection__pb2
+from . import samrpc_pb2 as samrpc__pb2
 
 
-class AiServiceStub(object):
+class SAMServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -15,33 +15,33 @@ class AiServiceStub(object):
             channel: A grpc.Channel.
         """
         self.SAMGetImageEmbedding = channel.unary_unary(
-                '/aiservice.AiService/SAMGetImageEmbedding',
-                request_serializer=dldetection__pb2.Image.SerializeToString,
-                response_deserializer=dldetection__pb2.InputInferArgs.FromString,
+                '/sam_service.SAMService/SAMGetImageEmbedding',
+                request_serializer=samrpc__pb2.Image.SerializeToString,
+                response_deserializer=samrpc__pb2.InputInferArgs.FromString,
                 )
         self.SAMGetImageEmbeddingUseCache = channel.unary_unary(
-                '/aiservice.AiService/SAMGetImageEmbeddingUseCache',
-                request_serializer=dldetection__pb2.Image.SerializeToString,
-                response_deserializer=dldetection__pb2.InputInferArgsWithCache.FromString,
+                '/sam_service.SAMService/SAMGetImageEmbeddingUseCache',
+                request_serializer=samrpc__pb2.Image.SerializeToString,
+                response_deserializer=samrpc__pb2.InputInferArgsWithCache.FromString,
                 )
         self.SAMPredict = channel.unary_unary(
-                '/aiservice.AiService/SAMPredict',
-                request_serializer=dldetection__pb2.SAMPredictRequest.SerializeToString,
-                response_deserializer=dldetection__pb2.SAMPredictResponse.FromString,
+                '/sam_service.SAMService/SAMPredict',
+                request_serializer=samrpc__pb2.SAMPredictRequest.SerializeToString,
+                response_deserializer=samrpc__pb2.SAMPredictResponse.FromString,
                 )
         self.SAMPredictUseCache = channel.unary_unary(
-                '/aiservice.AiService/SAMPredictUseCache',
-                request_serializer=dldetection__pb2.SAMPredictUseCacheRequest.SerializeToString,
-                response_deserializer=dldetection__pb2.SAMPredictResponseWithCache.FromString,
+                '/sam_service.SAMService/SAMPredictUseCache',
+                request_serializer=samrpc__pb2.SAMPredictUseCacheRequest.SerializeToString,
+                response_deserializer=samrpc__pb2.SAMPredictResponseWithCache.FromString,
                 )
         self.CleanCache = channel.unary_unary(
-                '/aiservice.AiService/CleanCache',
-                request_serializer=dldetection__pb2.ServerCache.SerializeToString,
-                response_deserializer=dldetection__pb2.CleanCacheRespose.FromString,
+                '/sam_service.SAMService/CleanCache',
+                request_serializer=samrpc__pb2.ServerCache.SerializeToString,
+                response_deserializer=samrpc__pb2.CleanCacheRespose.FromString,
                 )
 
 
-class AiServiceServicer(object):
+class SAMServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def SAMGetImageEmbedding(self, request, context):
@@ -75,41 +75,41 @@ class AiServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_AiServiceServicer_to_server(servicer, server):
+def add_SAMServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'SAMGetImageEmbedding': grpc.unary_unary_rpc_method_handler(
                     servicer.SAMGetImageEmbedding,
-                    request_deserializer=dldetection__pb2.Image.FromString,
-                    response_serializer=dldetection__pb2.InputInferArgs.SerializeToString,
+                    request_deserializer=samrpc__pb2.Image.FromString,
+                    response_serializer=samrpc__pb2.InputInferArgs.SerializeToString,
             ),
             'SAMGetImageEmbeddingUseCache': grpc.unary_unary_rpc_method_handler(
                     servicer.SAMGetImageEmbeddingUseCache,
-                    request_deserializer=dldetection__pb2.Image.FromString,
-                    response_serializer=dldetection__pb2.InputInferArgsWithCache.SerializeToString,
+                    request_deserializer=samrpc__pb2.Image.FromString,
+                    response_serializer=samrpc__pb2.InputInferArgsWithCache.SerializeToString,
             ),
             'SAMPredict': grpc.unary_unary_rpc_method_handler(
                     servicer.SAMPredict,
-                    request_deserializer=dldetection__pb2.SAMPredictRequest.FromString,
-                    response_serializer=dldetection__pb2.SAMPredictResponse.SerializeToString,
+                    request_deserializer=samrpc__pb2.SAMPredictRequest.FromString,
+                    response_serializer=samrpc__pb2.SAMPredictResponse.SerializeToString,
             ),
             'SAMPredictUseCache': grpc.unary_unary_rpc_method_handler(
                     servicer.SAMPredictUseCache,
-                    request_deserializer=dldetection__pb2.SAMPredictUseCacheRequest.FromString,
-                    response_serializer=dldetection__pb2.SAMPredictResponseWithCache.SerializeToString,
+                    request_deserializer=samrpc__pb2.SAMPredictUseCacheRequest.FromString,
+                    response_serializer=samrpc__pb2.SAMPredictResponseWithCache.SerializeToString,
             ),
             'CleanCache': grpc.unary_unary_rpc_method_handler(
                     servicer.CleanCache,
-                    request_deserializer=dldetection__pb2.ServerCache.FromString,
-                    response_serializer=dldetection__pb2.CleanCacheRespose.SerializeToString,
+                    request_deserializer=samrpc__pb2.ServerCache.FromString,
+                    response_serializer=samrpc__pb2.CleanCacheRespose.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'aiservice.AiService', rpc_method_handlers)
+            'sam_service.SAMService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class AiService(object):
+class SAMService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -123,9 +123,9 @@ class AiService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/aiservice.AiService/SAMGetImageEmbedding',
-            dldetection__pb2.Image.SerializeToString,
-            dldetection__pb2.InputInferArgs.FromString,
+        return grpc.experimental.unary_unary(request, target, '/sam_service.SAMService/SAMGetImageEmbedding',
+            samrpc__pb2.Image.SerializeToString,
+            samrpc__pb2.InputInferArgs.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -140,9 +140,9 @@ class AiService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/aiservice.AiService/SAMGetImageEmbeddingUseCache',
-            dldetection__pb2.Image.SerializeToString,
-            dldetection__pb2.InputInferArgsWithCache.FromString,
+        return grpc.experimental.unary_unary(request, target, '/sam_service.SAMService/SAMGetImageEmbeddingUseCache',
+            samrpc__pb2.Image.SerializeToString,
+            samrpc__pb2.InputInferArgsWithCache.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -157,9 +157,9 @@ class AiService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/aiservice.AiService/SAMPredict',
-            dldetection__pb2.SAMPredictRequest.SerializeToString,
-            dldetection__pb2.SAMPredictResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/sam_service.SAMService/SAMPredict',
+            samrpc__pb2.SAMPredictRequest.SerializeToString,
+            samrpc__pb2.SAMPredictResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -174,9 +174,9 @@ class AiService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/aiservice.AiService/SAMPredictUseCache',
-            dldetection__pb2.SAMPredictUseCacheRequest.SerializeToString,
-            dldetection__pb2.SAMPredictResponseWithCache.FromString,
+        return grpc.experimental.unary_unary(request, target, '/sam_service.SAMService/SAMPredictUseCache',
+            samrpc__pb2.SAMPredictUseCacheRequest.SerializeToString,
+            samrpc__pb2.SAMPredictResponseWithCache.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -191,8 +191,8 @@ class AiService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/aiservice.AiService/CleanCache',
-            dldetection__pb2.ServerCache.SerializeToString,
-            dldetection__pb2.CleanCacheRespose.FromString,
+        return grpc.experimental.unary_unary(request, target, '/sam_service.SAMService/CleanCache',
+            samrpc__pb2.ServerCache.SerializeToString,
+            samrpc__pb2.CleanCacheRespose.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
