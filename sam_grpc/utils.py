@@ -15,7 +15,7 @@ import base64
 import numpy as np
 import cv2
 
-from .proto import dldetection_pb2
+from .proto import samrpc_pb2
 
 def get_img(img_info):
     if os.path.isfile(img_info):
@@ -30,22 +30,22 @@ def get_img(img_info):
 
 
 NP2PROTO_MAP = {
-    np.dtype("int"): dldetection_pb2.TensorInt,
-    np.dtype("bool"): dldetection_pb2.TensorBool,
-    np.dtype("float32"): dldetection_pb2.TensorFloat
+    np.dtype("int"): samrpc_pb2.TensorInt,
+    np.dtype("bool"): samrpc_pb2.TensorBool,
+    np.dtype("float32"): samrpc_pb2.TensorFloat
 }
 
 PROTO2NP_MAP = {
-    dldetection_pb2.TensorInt: np.dtype("int"),
-    dldetection_pb2.TensorFloat: np.dtype("float32"),
-    dldetection_pb2.TensorBool: np.dtype("bool"),
+    samrpc_pb2.TensorInt: np.dtype("int"),
+    samrpc_pb2.TensorFloat: np.dtype("float32"),
+    samrpc_pb2.TensorBool: np.dtype("bool"),
 }
 
 
 def np2tensor_proto(
     np_ndarray: Union[np.ndarray, "torch.Tensor"]
-) -> Union[dldetection_pb2.TensorInt, dldetection_pb2.TensorFloat,
-           dldetection_pb2.TensorBool]:
+) -> Union[samrpc_pb2.TensorInt, samrpc_pb2.TensorFloat,
+           samrpc_pb2.TensorBool]:
     """
     Converts a NumPy ndarray or a PyTorch tensor to a tensor protobuf message.
 
@@ -53,7 +53,7 @@ def np2tensor_proto(
         np_ndarray (Union[np.ndarray, torch.Tensor]): The NumPy ndarray or PyTorch tensor to convert.
 
     Returns:
-        Union[dldetection_pb2.TensorInt, dldetection_pb2.TensorFloat, dldetection_pb2.TensorBool]:
+        Union[samrpc_pb2.TensorInt, samrpc_pb2.TensorFloat, samrpc_pb2.TensorBool]:
         A tensor protobuf message containing the data from the input ndarray or tensor.
     """
     if not isinstance(np_ndarray, np.ndarray) and hasattr(np_ndarray, "detach"):
@@ -67,14 +67,14 @@ def np2tensor_proto(
 
 
 def tensor_proto2np(
-    tensor_pb: Union[dldetection_pb2.TensorInt, dldetection_pb2.TensorFloat,
-                     dldetection_pb2.TensorBool]
+    tensor_pb: Union[samrpc_pb2.TensorInt, samrpc_pb2.TensorFloat,
+                     samrpc_pb2.TensorBool]
 ) -> np.ndarray:
     """Converts a Protocol Buffer tensor to a NumPy array.
 
     Args:
-        tensor_pb: A Protocol Buffer tensor of type `dldetection_pb2.TensorInt`,
-            `dldetection_pb2.TensorFloat`, or `dldetection_pb2.TensorBool`.
+        tensor_pb: A Protocol Buffer tensor of type `samrpc_pb2.TensorInt`,
+            `samrpc_pb2.TensorFloat`, or `samrpc_pb2.TensorBool`.
 
     Returns:
         A NumPy array with the same data and shape as the input tensor.
@@ -85,7 +85,7 @@ def tensor_proto2np(
     return np_matrix
 
 
-def cvImg2ProtoImage(img: Union[str, np.ndarray]) -> dldetection_pb2.Image:
+def cvImg2ProtoImage(img: Union[str, np.ndarray]) -> samrpc_pb2.Image:
     """
     Converts an image to a protocol buffer message.
 
@@ -94,7 +94,7 @@ def cvImg2ProtoImage(img: Union[str, np.ndarray]) -> dldetection_pb2.Image:
             the path to an image file or a NumPy array.
 
     Returns:
-        dldetection_pb2.Image: The protocol buffer message representing the
+        samrpc_pb2.Image: The protocol buffer message representing the
         converted image.
 
     Raises:
@@ -103,24 +103,24 @@ def cvImg2ProtoImage(img: Union[str, np.ndarray]) -> dldetection_pb2.Image:
     Example:
         >>> img_path = 'path/to/image.jpg'
         >>> proto_img = cvImg2ProtoImage(img_path)
-        >>> assert isinstance(proto_img, dldetection_pb2.Image)
+        >>> assert isinstance(proto_img, samrpc_pb2.Image)
     """
     # Function body goes here
 
     if isinstance(img, str):
         with open(img, 'rb') as f:
             img_b64encode = base64.b64encode(f.read())
-        return dldetection_pb2.Image(path=img, imdata=img_b64encode)
+        return samrpc_pb2.Image(path=img, imdata=img_b64encode)
     elif isinstance(img, np.ndarray):
         base64_str = cv2.imencode('.jpg', img)[1].tostring()
         img_b64encode = base64.b64encode(base64_str)
-        return dldetection_pb2.Image(imdata=img_b64encode)
+        return samrpc_pb2.Image(imdata=img_b64encode)
     else:
         print("error,can not convert image to proto")
-        return dldetection_pb2.Image()
+        return samrpc_pb2.Image()
 
 
-def protoImage2cvImg(protoimg: dldetection_pb2.Image) -> np.ndarray:
+def protoImage2cvImg(protoimg: samrpc_pb2.Image) -> np.ndarray:
     """
     Convert a protobuf image to a numpy array compatible with OpenCV.
 
@@ -140,8 +140,8 @@ def protoImage2cvImg(protoimg: dldetection_pb2.Image) -> np.ndarray:
 
 
 def protoTensorIsValid(
-    proto_tensor: Union[dldetection_pb2.TensorInt, dldetection_pb2.TensorFloat,
-                        dldetection_pb2.TensorBool]
+    proto_tensor: Union[samrpc_pb2.TensorInt, samrpc_pb2.TensorFloat,
+                        samrpc_pb2.TensorBool]
 ) -> bool:
     """
     Check if a protobuf tensor is valid by verifying that its data and shape fields are not empty.

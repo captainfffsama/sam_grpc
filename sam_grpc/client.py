@@ -3,7 +3,7 @@
 @Author: captainfffsama
 @Date: 2023-04-24 13:52:17
 @LastEditors: captainfffsama tuanzhangsama@outlook.com
-@LastEditTime: 2023-04-24 16:23:00
+@LastEditTime: 2023-04-25 11:22:30
 @FilePath: /sam_grpc/sam_grpc/client.py
 @Description:
 '''
@@ -12,8 +12,8 @@ from typing import Union, Tuple, Optional
 import grpc
 import numpy as np
 
-from .proto import dldetection_pb2_grpc as dld_grpc
-from .proto import dldetection_pb2
+from .proto import samrpc_pb2_grpc as sam_grpc
+from .proto import samrpc_pb2
 from .container import InputInferArgs, ServerCache
 from .utils import cvImg2ProtoImage, np2tensor_proto, tensor_proto2np
 
@@ -36,7 +36,7 @@ class SAMClient(object):
             options=[('grpc.max_send_message_length', self.max_send_message),
                      ('grpc.max_receive_message_length',
                       self.max_receive_message)])
-        self.stub = dld_grpc.AiServiceStub(self.channel)
+        self.stub = sam_grpc.SAMServiceStub(self.channel)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -82,7 +82,7 @@ class SAMClient(object):
         if mask_input:
             proto_args_dict["mask_input"] = np2tensor_proto(mask_input)
 
-        request = dldetection_pb2.SAMPredictRequest(**proto_args_dict)
+        request = samrpc_pb2.SAMPredictRequest(**proto_args_dict)
         response = self.stub.SAMPredict(request)
         if response.status != 0:
             return None, None, None
@@ -117,7 +117,7 @@ class SAMClient(object):
         if mask_input:
             proto_args_dict["mask_input_cache"] = mask_input.to_proto()
 
-        request = dldetection_pb2.SAMPredictUseCacheRequest(**proto_args_dict)
+        request = samrpc_pb2.SAMPredictUseCacheRequest(**proto_args_dict)
         response = self.stub.SAMPredictUseCache(request)
         if response.result.status != 0:
             return None, None, None, None
@@ -129,5 +129,5 @@ class SAMClient(object):
 
     def CleanCache(self, ServerCache):
         response = self.stub.CleanCache(
-            dldetection_pb2.CleanCacheRequest(
+            samrpc_pb2.CleanCacheRequest(
                 ServerCache=ServerCache.to_proto()))

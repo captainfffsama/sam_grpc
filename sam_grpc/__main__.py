@@ -21,7 +21,7 @@ import pkgutil
 import yaml
 
 import grpc
-from .proto import dldetection_pb2_grpc as dld_grpc
+from .proto import samrpc_pb2_grpc as sam_grpc
 from .model import SAMGRPCModel
 from . import base_config as config_manager
 
@@ -44,7 +44,7 @@ async def run_server(args):
                  ('grpc.max_receive_message_length',
                   grpc_args['max_receive_message_length'])])
     model = SAMGRPCModel(**detector_params)
-    dld_grpc.add_AiServiceServicer_to_server(model, server)
+    sam_grpc.add_SAMServiceServicer_to_server(model, server)
 
     server.add_insecure_port("{}:{}".format(grpc_args['host'],
                                             grpc_args['port']))

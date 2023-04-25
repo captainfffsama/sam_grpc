@@ -11,11 +11,11 @@ from .client import SAMClient
 from .container import InputInferArgs, ServerCache
 from .utils import cvImg2ProtoImage, np2tensor_proto, tensor_proto2np, protoImage2cvImg,protoTensorIsValid
 
-from .proto import dldetection_pb2, dldetection_pb2_grpc
+from .proto import samrpc_pb2, samrpc_pb2_grpc
 
 __version__ = 'v0.2'
 __all__ = [
     "SAMClient", "InputInferArgs", "ServerCache", "cvImg2ProtoImage",
     "np2tensor_proto", "tensor_proto2np", "protoImage2cvImg","protoTensorIsValid"
-    "dldetection_pb2", "dldetection_pb2_grpc", "__version__"
+    "samrpc_pb2", "samrpc_pb2_grpc", "__version__"
 ]
