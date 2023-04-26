@@ -6,6 +6,14 @@ install on server need `torch`,[SAM](https://github.com/facebookresearch/segment
 ```shell
 pip install git+https://github.com/captainfffsama/sam_grpc.git
 ```
+docker install:
+```shell
+git clone https://github.com/captainfffsama/sam_grpc.git
+cd sam_grpc
+cd docker
+# if you need change some config of server,you can change sam_grpc/docker/utils/cfg.yaml
+sh ./build_container.sh
+```
 
 # Getting Started
 On Server:
