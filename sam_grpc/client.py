@@ -3,7 +3,7 @@
 @Author: captainfffsama
 @Date: 2023-04-24 13:52:17
 @LastEditors: captainfffsama tuanzhangsama@outlook.com
-@LastEditTime: 2023-04-25 11:22:30
+@LastEditTime: 2023-04-25 18:32:36
 @FilePath: /sam_grpc/sam_grpc/client.py
 @Description:
 '''
@@ -73,13 +73,13 @@ class SAMClient(object):
             "multimask_output": multimask_output,
             "return_logits": return_logits
         }
-        if point_coords:
+        if point_coords is not None:
             proto_args_dict["point_coords"] = np2tensor_proto(point_coords)
-        if point_labels:
+        if point_labels is not None:
             proto_args_dict["point_labels"] = np2tensor_proto(point_labels)
-        if box:
+        if box is not None:
             proto_args_dict["box"] = np2tensor_proto(box)
-        if mask_input:
+        if mask_input is not None:
             proto_args_dict["mask_input"] = np2tensor_proto(mask_input)
 
         request = samrpc_pb2.SAMPredictRequest(**proto_args_dict)
@@ -108,13 +108,13 @@ class SAMClient(object):
             "return_logits": return_logits,
         }
 
-        if point_coords:
+        if point_coords is not None:
             proto_args_dict["point_coords"] = np2tensor_proto(point_coords)
-        if point_labels:
+        if point_labels is not None:
             proto_args_dict["point_labels"] = np2tensor_proto(point_labels)
-        if box:
+        if box is not None:
             proto_args_dict["box"] = np2tensor_proto(box)
-        if mask_input:
+        if mask_input is not None:
             proto_args_dict["mask_input_cache"] = mask_input.to_proto()
 
         request = samrpc_pb2.SAMPredictUseCacheRequest(**proto_args_dict)
