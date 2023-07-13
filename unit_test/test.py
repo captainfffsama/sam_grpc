@@ -3,7 +3,7 @@
 @Author: captainfffsama
 @Date: 2023-04-21 16:23:16
 @LastEditors: captainfffsama tuanzhangsama@outlook.com
-@LastEditTime: 2023-04-25 11:53:05
+@LastEditTime: 2023-07-13 11:37:45
 @FilePath: /sam_grpc/unit_test/test.py
 @Description:
 '''
@@ -20,7 +20,7 @@ def run():
     img_path = r'/home/chiebotgpuhq/MyCode/python/pytorch/mmdet_grpc/test_weight/00cb74e7b452c399721bff526eb6489c.jpg'
     client = SAMClient("127.0.0.1","52018")
     with client:
-        img=cv2.imread(img_path)
+        img=cv2.imread(img_path,cv2.IMREAD_COLOR|cv2.IMREAD_IGNORE_ORIENTATION)
         r=client.SAMGetImageEmbedding(img)
         print("result is:",r)
         r1=client.SAMGetImageEmbeddingUseCache(img)

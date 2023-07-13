@@ -3,7 +3,7 @@
 @Author: captainfffsama
 @Date: 2023-04-21 16:57:50
 @LastEditors: captainfffsama tuanzhangsama@outlook.com
-@LastEditTime: 2023-04-24 17:08:21
+@LastEditTime: 2023-07-13 11:36:35
 @FilePath: /sam_grpc/sam_grpc/utils.py
 @Description:
 '''
@@ -22,11 +22,11 @@ def get_img(img_info):
         if not os.path.exists(img_info):
             return None
         else:
-            return cv2.imread(img_info)  #ignore
+            return cv2.imread(img_info,cv2._COLOR|cv2.IMREAD_IGNORE_ORIENTATION)  #ignore
     else:
         img_str = base64.b64decode(img_info)
         img_np = np.fromstring(img_str, np.uint8)
-        return cv2.imdecode(img_np, cv2.IMREAD_COLOR)
+        return cv2.imdecode(img_np, cv2.IMREAD_COLOR|cv2.IMREAD_IGNORE_ORIENTATION)
 
 
 NP2PROTO_MAP = {
@@ -134,7 +134,7 @@ def protoImage2cvImg(protoimg: samrpc_pb2.Image) -> np.ndarray:
         FileNotFoundError: If the path specified in protoimg does not exist.
     """
     if os.path.exists(protoimg.path):
-        return cv2.imread(protoimg.path)
+        return cv2.imread(protoimg.path,cv2.IMREAD_COLOR|cv2.IMREAD_IGNORE_ORIENTATION)
     else:
         return get_img(protoimg.imdata)
 
