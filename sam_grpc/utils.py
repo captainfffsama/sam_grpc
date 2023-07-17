@@ -3,7 +3,7 @@
 @Author: captainfffsama
 @Date: 2023-04-21 16:57:50
 @LastEditors: captainfffsama tuanzhangsama@outlook.com
-@LastEditTime: 2023-07-13 11:36:35
+@LastEditTime: 2023-07-17 16:23:08
 @FilePath: /sam_grpc/sam_grpc/utils.py
 @Description:
 '''
@@ -16,13 +16,16 @@ import numpy as np
 import cv2
 
 from .proto import samrpc_pb2
+def cv2imread(img_path,flag=cv2.IMREAD_COLOR|cv2.IMREAD_IGNORE_ORIENTATION):
+    img=cv2.imdecode(np.fromfile(img_path,dtype=np.uint8),flag)
+    return img
 
 def get_img(img_info):
     if os.path.isfile(img_info):
         if not os.path.exists(img_info):
             return None
         else:
-            return cv2.imread(img_info,cv2._COLOR|cv2.IMREAD_IGNORE_ORIENTATION)  #ignore
+            return cv2imread(img_info,cv2._COLOR|cv2.IMREAD_IGNORE_ORIENTATION)  #ignore
     else:
         img_str = base64.b64decode(img_info)
         img_np = np.fromstring(img_str, np.uint8)
@@ -134,7 +137,7 @@ def protoImage2cvImg(protoimg: samrpc_pb2.Image) -> np.ndarray:
         FileNotFoundError: If the path specified in protoimg does not exist.
     """
     if os.path.exists(protoimg.path):
-        return cv2.imread(protoimg.path,cv2.IMREAD_COLOR|cv2.IMREAD_IGNORE_ORIENTATION)
+        return cv2imread(protoimg.path,cv2.IMREAD_COLOR|cv2.IMREAD_IGNORE_ORIENTATION)
     else:
         return get_img(protoimg.imdata)
 

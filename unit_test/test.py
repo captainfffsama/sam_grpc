@@ -3,15 +3,14 @@
 @Author: captainfffsama
 @Date: 2023-04-21 16:23:16
 @LastEditors: captainfffsama tuanzhangsama@outlook.com
-@LastEditTime: 2023-07-13 11:37:45
+@LastEditTime: 2023-07-17 16:23:35
 @FilePath: /sam_grpc/unit_test/test.py
 @Description:
 '''
 
 import cv2
 from sam_grpc.client import SAMClient
-from sam_grpc import InputInferArgs,ServerCache
-
+from sam_grpc import InputInferArgs,ServerCache,cv2imread
 
 def run():
     # NOTE(gRPC Python Team): .close() is possible on a channel and should be
@@ -20,7 +19,7 @@ def run():
     img_path = r'/home/chiebotgpuhq/MyCode/python/pytorch/mmdet_grpc/test_weight/00cb74e7b452c399721bff526eb6489c.jpg'
     client = SAMClient("127.0.0.1","52018")
     with client:
-        img=cv2.imread(img_path,cv2.IMREAD_COLOR|cv2.IMREAD_IGNORE_ORIENTATION)
+        img=cv2imread(img_path,cv2.IMREAD_COLOR|cv2.IMREAD_IGNORE_ORIENTATION)
         r=client.SAMGetImageEmbedding(img)
         print("result is:",r)
         r1=client.SAMGetImageEmbeddingUseCache(img)
