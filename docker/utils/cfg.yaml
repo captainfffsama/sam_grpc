@@ -1,8 +1,8 @@
 model_params:
-    model_type: "vit_h"
-    ckpt_path: "/root/mount/sam_weight/sam_vit_h_4b8939.pth"
+    model_type: "vit_t"
+    ckpt_path: "/root/mount/sam_weight/mobile_sam.pt"
     device: "cuda:0"
 grpc_args:
     host: "0.0.0.0"
     port: "52018"
-    max_workers: 1
+    max_workers: 3

@@ -3,7 +3,7 @@
 @Author: captainfffsama
 @Date: 2023-04-21 15:49:00
 @LastEditors: captainfffsama tuanzhangsama@outlook.com
-@LastEditTime: 2023-04-24 15:39:21
+@LastEditTime: 2023-08-01 17:59:54
 @FilePath: /sam_grpc/sam_grpc/predictor.py
 @Description: a modification for sam predictor
 '''
@@ -18,8 +18,8 @@ from typing import Optional, Tuple
 import numpy as np
 import torch
 
-from segment_anything.modeling import Sam
-from segment_anything.utils.transforms import ResizeLongestSide
+from mobile_sam.modeling import Sam
+from mobile_sam.utils.transforms import ResizeLongestSide
 from .client import InputInferArgs
 
 

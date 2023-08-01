@@ -3,7 +3,7 @@
 @Author: captainfffsama
 @Date: 2023-04-21 18:15:28
 @LastEditors: captainfffsama tuanzhangsama@outlook.com
-@LastEditTime: 2023-04-25 11:15:28
+@LastEditTime: 2023-08-01 18:00:32
 @FilePath: /sam_grpc/sam_grpc/model.py
 @Description:
 '''
@@ -16,7 +16,7 @@ from cacheout import LFUCache
 from .proto import samrpc_pb2
 from .proto import samrpc_pb2_grpc as sam_pb2_grpc
 
-from segment_anything import sam_model_registry
+from mobile_sam import sam_model_registry
 from .predictor import SamPredictorFix
 from .utils import tensor_proto2np, np2tensor_proto, protoImage2cvImg, protoTensorIsValid
 from .container import InputInferArgs
@@ -26,7 +26,7 @@ class SAMGRPCModel(sam_pb2_grpc.SAMServiceServicer):
 
     def __init__(self,
                  ckpt_path,
-                 model_type: str = "vit_h",
+                 model_type: str = "vit_t",
                  device: str = "cuda:0") -> None:
         super().__init__()
         self._sam_model = sam_model_registry[model_type](checkpoint=ckpt_path)

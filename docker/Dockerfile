@@ -1,4 +1,4 @@
-FROM  pytorch/pytorch:1.11.0-cuda11.3-cudnn8-devel as rpc
+FROM  pytorch/pytorch:1.13.0-cuda11.6-cudnn8-runtime as rpc
 RUN sed -i "s@http://.*archive.ubuntu.com@http://mirrors.bfsu.edu.cn@g" /etc/apt/sources.list \
     && sed -i "s@http://.*security.ubuntu.com@http://mirrors.bfsu.edu.cn@g" /etc/apt/sources.list \
     && rm /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/nvidia-ml.list \
@@ -27,8 +27,9 @@ RUN sed -i "s@http://.*archive.ubuntu.com@http://mirrors.bfsu.edu.cn@g" /etc/apt
     && pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple \
     && pip install --no-cache-dir grpcio==1.37.0 \
     && pip install --no-cache-dir grpcio-tools==1.37.0 \
+    && pip install --no-cache-dir timm==0.9.2 \
     && pip install --no-cache-dir opencv-python-headless \
-    && pip install git+https://github.com/facebookresearch/segment-anything.git \
+    && pip install git+https://github.com/ChaoningZhang/MobileSAM.git\
     && pip install --no-cache-dir pid  \
     && pip install git+https://github.com/captainfffsama/sam_grpc.git \
     && conda clean --all
@@ -36,7 +37,8 @@ RUN sed -i "s@http://.*archive.ubuntu.com@http://mirrors.bfsu.edu.cn@g" /etc/apt
 RUN mkdir /root/mount \
     && mkdir /root/mount/sam_weight \
     && cd /root/mount/sam_weight \
-    && wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
+    # && wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
+    && wget https://soft.chiebot.com:10000/model_weight/mobileSAM/mobile_sam.pt
 
 
 

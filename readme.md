@@ -1,12 +1,17 @@
 # Introduction
-a simple rpc tools for [SAM](https://github.com/facebookresearch/segment-anything)
+
+a simple rpc tools for [SAM](https://github.com/facebookresearch/segment-anything),[MobileSAM](https://github.com/ChaoningZhang/MobileSAM)
 
 # Installation
-install on server need `torch`,[SAM](https://github.com/facebookresearch/segment-anything)
+
+install on server need `torch`,[MobileSAM](https://github.com/ChaoningZhang/MobileSAM)
+
 ```shell
 pip install git+https://github.com/captainfffsama/sam_grpc.git
 ```
+
 docker install:
+
 ```shell
 git clone https://github.com/captainfffsama/sam_grpc.git
 cd sam_grpc
@@ -16,13 +21,16 @@ sh ./build_container.sh
 ```
 
 # Getting Started
+
 On Server:
+
 ```shell
 python -m sam_grpc -h
 python -m sam_grpc -c your_sam_grpc_cfg_file_path
 ```
 
 On client:
+
 ```python
 import cv2
 from sam_grpc import SAMClient
@@ -44,5 +52,7 @@ with SAMClient("127.0.0.1","52018") as client:
     print("result shape:{} \n {} \n {}".format(r3[0].shape,r3[1].shape,r3[2].shape))
     print("mask cache name:",r3[-1])
 ```
+
 # Thanks
+
 Thanks to Meta for open-sourcing their [excellent work](https://github.com/facebookresearch/segment-anything).
