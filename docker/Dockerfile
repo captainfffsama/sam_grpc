@@ -1,8 +1,8 @@
 FROM  pytorch/pytorch:1.13.0-cuda11.6-cudnn8-runtime as rpc
 RUN sed -i "s@http://.*archive.ubuntu.com@http://mirrors.bfsu.edu.cn@g" /etc/apt/sources.list \
     && sed -i "s@http://.*security.ubuntu.com@http://mirrors.bfsu.edu.cn@g" /etc/apt/sources.list \
-    && rm /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/nvidia-ml.list \
-    && apt-key del 7fa2af80 \
+    # && rm /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/nvidia-ml.list \
+    # && apt-key del 7fa2af80 \
     # && wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-keyring_1.0-1_all.deb \
     # && dpkg -i cuda-keyring_1.0-1_all.deb \
     # && rm cuda-keyring_1.0-1_all.deb \
@@ -10,16 +10,16 @@ RUN sed -i "s@http://.*archive.ubuntu.com@http://mirrors.bfsu.edu.cn@g" /etc/apt
     git \
     wget \
     monit \
-    libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev\
-    libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
-    libgl1 \
-    ffmpeg \
-    build-essential \
-    ninja-build \
-    libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev \
+    # libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev\
+    # libglib2.0-0 \
+    # libsm6 \
+    # libxext6 \
+    # libxrender-dev \
+    # libgl1 \
+    # ffmpeg \
+    # build-essential \
+    # ninja-build \
+    # libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && cd /root \
