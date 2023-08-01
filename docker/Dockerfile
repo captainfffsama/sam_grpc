@@ -10,6 +10,7 @@ RUN sed -i "s@http://.*archive.ubuntu.com@http://mirrors.bfsu.edu.cn@g" /etc/apt
     git \
     wget \
     monit \
+    vim \
     # libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev\
     # libglib2.0-0 \
     # libsm6 \
@@ -29,9 +30,9 @@ RUN sed -i "s@http://.*archive.ubuntu.com@http://mirrors.bfsu.edu.cn@g" /etc/apt
     && pip install --no-cache-dir grpcio-tools==1.37.0 \
     && pip install --no-cache-dir timm==0.9.2 \
     && pip install --no-cache-dir opencv-python-headless \
-    && pip install git+https://github.com/ChaoningZhang/MobileSAM.git\
+    && pip install --no-cache-dir git+https://github.com/ChaoningZhang/MobileSAM.git\
     && pip install --no-cache-dir pid  \
-    && pip install git+https://github.com/captainfffsama/sam_grpc.git \
+    && pip install --no-cache-dir git+https://github.com/captainfffsama/sam_grpc.git \
     && conda clean --all
 
 RUN mkdir /root/mount \
